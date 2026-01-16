@@ -2,46 +2,31 @@
 
 """
 Created by: Giordan Zeina
-Created on: Jun 2025
-This constants file is for Space Alien game
+Created on: Jan 2026
+This constants file is for Penalty Shootout game
 """
 
-# PyBadge screen size is 160x128 and sprites are 16x16
 SCREEN_X = 160
 SCREEN_Y = 128
 SCREEN_GRID_X = 10
 SCREEN_GRID_Y = 8
 SPRITE_SIZE = 16
-TOTAL_NUMBER_OF_ALIENS = 5
-TOTAL_NUMBER_OF_LASERS = 5
-SHIP_SPEED = 1
-ALIEN_SPEED = 1
-LASER_SPEED = 2
-OFF_SCREEN_X = -100
-OFF_SCREEN_Y = -100
-OFF_TOP_SCREEN = -1 * SPRITE_SIZE
-OFF_BOTTOM_SCREEN = SCREEN_Y + SPRITE_SIZE
 FPS = 60
-SPRITE_MOVEMENT_SPEED = 1
 
-# Using for button state
+# Palette for Text (16 colors)
+RED_PALETTE = (0xffe0, 0x1a76, 0x0000, 0xff00, 0xffaf, 0xff51, 0xffa8, 0xff00,
+               0x9068, 0x8633, 0x3010, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000)
+
+# Button States
 button_state = {
-    "button_up" : "up",
-    "button_just_pressed": "just pressed",
-    "button_still_pressed": "still pressed",
-    "button_released": "released",
-    
+    "button_up": 0,
+    "button_just_pressed": 1,
+    "button_still_pressed": 2,
+    "button_released": 3
 }
 
-WHITE_BLACK_PALETTE = (
-    b"\xf8\x1f\x00\x00\xcey\xff\xff\xf8\x1f\x00\x19\xfc\xe0\xfd\xe0"
-    b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-)
-RED_PALETTE = (
-    b"\xff\xff\x00\x00\xcey\x66\xff\xff\xff\xff\xff\xff\xff\xfd\xe0"
-    b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-)
-BLUE_PALETTE = (
-    b"\xff\xff\x00\x22\xcey\x22\xff\xff\xff\xff\xff\xff\xff\xff\xff"
-    b"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff"
-)
+# Sgot selection (x, y) coordinates for sprites
+LOCATIONS = {
+    'TL': (40, 40), 'M': (72, 40), 'TR': (104, 40),
+    'BL': (40, 80), 'BR': (104, 80)
+}
