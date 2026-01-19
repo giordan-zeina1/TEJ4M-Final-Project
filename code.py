@@ -64,16 +64,16 @@ def game_scene():
     score_text.move(1, 1)
     score_text.text("Score: {0}".format(score))
 
-    # Load Sprites (index 0: keeper, index 1: ball)
-    image_bank_sprites = stage.Bank.from_bmp16("soccer_sprites.bmp")
-    image_bank_bg = stage.Bank.from_bmp16("soccer_field.bmp")
+    # Load Sprites
+    image_bank_sprites = stage.Bank.from_bmp16("football_sprites.bmp")
+    image_bank_bg = stage.Bank.from_bmp16("football_pitch.bmp")
     
     background = stage.Grid(image_bank_bg, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
     keeper = stage.Sprite(image_bank_sprites, 0, 72, 40)
     ball = stage.Sprite(image_bank_sprites, 1, 72, 100)
 
     # Audio setup
-    kick_sound = open("pew.wav", "rb") # Reusing your pew.wav as kick
+    kick_sound = open("pew.wav", "rb")
     goal_sound = open("coin.wav", "rb")
     sound = ugame.audio
 
@@ -86,9 +86,9 @@ def game_scene():
         player_choice = None
         
         # Button mapping to locations
-        if keys & ugame.K_UP: player_choice = 'M'
-        elif keys & ugame.K_LEFT and keys & ugame.K_UP: player_choice = 'TL'
+        if keys & ugame.K_LEFT and keys & ugame.K_UP: player_choice = 'TL'
         elif keys & ugame.K_RIGHT and keys & ugame.K_UP: player_choice = 'TR'
+        elif keys & ugame.K_UP: player_choice = 'M'
         elif keys & ugame.K_LEFT: player_choice = 'BL'
         elif keys & ugame.K_RIGHT: player_choice = 'BR'
 
@@ -97,16 +97,16 @@ def game_scene():
             sound.play(kick_sound)
             
             # Computer Logic
-            comp_choice = random.choice(list(constants.LOCATIONS.keys()))
+            computer_choice = random.choice(list(constants.LOCATIONS.keys()))
             
             # Visual feedback: Move sprites
             ball_pos = constants.LOCATIONS[player_choice]
-            keeper_pos = constants.LOCATIONS[comp_choice]
+            keeper_pos = constants.LOCATIONS[computer_choice]
             ball.move(ball_pos[0], ball_pos[1])
             keeper.move(keeper_pos[0], keeper_pos[1])
             
             # Scoring Logic
-            if player_choice != comp_choice:
+            if player_choice != computer_choice:
                 score += 1
                 sound.play(goal_sound)
             
