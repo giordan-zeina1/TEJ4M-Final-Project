@@ -13,14 +13,12 @@ import random
 import time
 
 def splash_scene():
-    # Only load what is needed to save RAM
     image_bank_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
-    background = stage.Grid(image_bank_background, 10, 8) # Use literal numbers to ensure grid size
+    background = stage.Grid(image_bank_background, 10, 8)
     game = stage.Stage(ugame.display, constants.FPS)
     game.layers = [background]
     game.render_block()
-    
-    # Audio after rendering to prevent timing crashes
+
     try:
         coin_sound = open("coin.wav", "rb")
         ugame.audio.play(coin_sound)
@@ -82,7 +80,6 @@ def game_scene():
             rounds += 1
             computer_choice = random.choice(list(constants.LOCATIONS.keys()))
 
-            # Use individual indices for move() to avoid tuple errors
             b_pos = constants.LOCATIONS[player_choice]
             k_pos = constants.LOCATIONS[computer_choice]
             
