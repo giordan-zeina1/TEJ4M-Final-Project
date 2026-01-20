@@ -13,39 +13,32 @@ import random
 import time
 
 def splash_scene():
-    # Load assets
-    coin_sound = open("coin.wav", 'rb')
-    sound = ugame.audio
-    sound.stop()
-    sound.mute(False)
-    sound.play(coin_sound)
-    
+    # Only load what is needed to save RAM
     image_bank_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
-    background = stage.Grid(image_bank_background, constants.SCREEN_X, constants.SCREEN_Y)
-    
+    background = stage.Grid(image_bank_background, 10, 8) # Use literal numbers to ensure grid size
     game = stage.Stage(ugame.display, constants.FPS)
     game.layers = [background]
     game.render_block()
     
+    # Audio after rendering to prevent timing crashes
+    try:
+        coin_sound = open("coin.wav", "rb")
+        ugame.audio.play(coin_sound)
+    except: pass # Skip if file is missing
+
     time.sleep(2.0)
     menu_scene()
 
 def menu_scene():
     image_bank_mt_background = stage.Bank.from_bmp16("mt_game_studio.bmp")
+    background = stage.Grid(image_bank_mt_background, 10, 8)
     
-    # Text setup
     text = []
-    text1 = stage.Text(width=29, height=12, font=None, palette=constants.RED_PALETTE)
-    text1.move(20, 10)
+    text1 = stage.Text(width=29, height=12, palette=constants.RED_PALETTE)
+    text1.move(20, 40)
     text1.text("PENALTY SHOOTOUT")
     text.append(text1)
-
-    text2 = stage.Text(width=29, height=12, font=None, palette=constants.RED_PALETTE)
-    text2.move(40, 110)
-    text2.text("PRESS START")
-    text.append(text2)
-
-    background = stage.Grid(image_bank_mt_background, constants.SCREEN_X, constants.SCREEN_Y)
+    
     game = stage.Stage(ugame.display, constants.FPS)
     game.layers = text + [background]
     game.render_block()
@@ -60,22 +53,16 @@ def game_scene():
     score = 0
     rounds = 0
     
-    score_text = stage.Text(width=29, height=14, font=None, palette=constants.RED_PALETTE)
+    score_text = stage.Text(width=29, height=14, palette=constants.RED_PALETTE)
     score_text.move(1, 1)
-    score_text.text("Score: {0}".format(score))
+    score_text.text("Score: 0")
 
-    # Load Sprites
     image_bank_sprites = stage.Bank.from_bmp16("football_sprites.bmp")
     image_bank_bg = stage.Bank.from_bmp16("football_pitch.bmp")
     
-    background = stage.Grid(image_bank_bg, constants.SCREEN_GRID_X, constants.SCREEN_GRID_Y)
+    background = stage.Grid(image_bank_bg, 10, 8)
     keeper = stage.Sprite(image_bank_sprites, 0, 72, 40)
     ball = stage.Sprite(image_bank_sprites, 1, 72, 100)
-
-    # Audio setup
-    kick_sound = open("pew.wav", "rb")
-    goal_sound = open("coin.wav", "rb")
-    sound = ugame.audio
 
     game = stage.Stage(ugame.display, constants.FPS)
     game.layers = [score_text, keeper, ball, background]
@@ -84,48 +71,41 @@ def game_scene():
     while True:
         keys = ugame.buttons.get_pressed()
         player_choice = None
-        
-        # Button mapping to locations
-        if keys & ugame.K_LEFT and keys & ugame.K_UP: player_choice = 'TL'
-        elif keys & ugame.K_RIGHT and keys & ugame.K_UP: player_choice = 'TR'
-        elif keys & ugame.K_UP: player_choice = 'M'
-        elif keys & ugame.K_LEFT: player_choice = 'BL'
-        elif keys & ugame.K_RIGHT: player_choice = 'BR'
+
+        if keys & ugame.K_LEFT and keys & ugame.K_UP: player_choice = "TL"
+        elif keys & ugame.K_RIGHT and keys & ugame.K_UP: player_choice = "TR"
+        elif keys & ugame.K_UP: player_choice = "M"
+        elif keys & ugame.K_LEFT: player_choice = "BL"
+        elif keys & ugame.K_RIGHT: player_choice = "BR"
 
         if player_choice and rounds < 5:
             rounds += 1
-            sound.play(kick_sound)
-            
-            # Computer Logic
             computer_choice = random.choice(list(constants.LOCATIONS.keys()))
+
+            # Use individual indices for move() to avoid tuple errors
+            b_pos = constants.LOCATIONS[player_choice]
+            k_pos = constants.LOCATIONS[computer_choice]
             
-            # Visual feedback: Move sprites
-            ball_pos = constants.LOCATIONS[player_choice]
-            keeper_pos = constants.LOCATIONS[computer_choice]
-            ball.move(ball_pos[0], ball_pos[1])
-            keeper.move(keeper_pos[0], keeper_pos[1])
-            
-            # Scoring Logic
+            ball.move(b_pos[0], b_pos[1])
+            keeper.move(k_pos[0], k_pos[1])
+
             if player_choice != computer_choice:
                 score += 1
-                sound.play(goal_sound)
             
             score_text.clear()
             score_text.text("Score: {0} / {1}".format(score, rounds))
             game.render_block()
-            
-            time.sleep(1.5)
-            # Reset for next round
+            time.sleep(1.0)
+
+            # Reset
             ball.move(72, 100)
             keeper.move(72, 40)
             game.render_block()
 
         if rounds >= 5:
-            # End game or return to menu
             time.sleep(2.0)
             menu_scene()
-
         game.tick()
 
-# Start game
-splash_scene()
+if __name__ == "__main__":
+    splash_scene()
